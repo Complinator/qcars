@@ -1,0 +1,6 @@
+# IMPORTANT
+- PS1 file is intended to use on windows only, as this is the first push of this version I am not going to get into much details on how to set up for linux and MacOS, but it was already done, just not documented, so will be implemented in future work
+- In order to run this you MUST have installed an [X Server](https://sourceforge.net/projects/xming/), otherwise, you will be able to open the docker container, but you won't see any app opening from it
+- Note that `example.ps1` requires you to modify the path on the 2nd line to the path to your `config.xlaunch` file
+- The app takes a while to run the gazebo model, so don't worry if it seems frozen
+- The model used cames from an open-source repo called [autonomus-driving](https://github.com/bchampp/autonomous-driving)
