@@ -7,4 +7,4 @@
 - Remember to create the container using `docker build -t qcar-sim .` (use that code inside this folder)
 - In order to run nodes you would need to run another terminal using `docker exec -it qcar bash`
 - To start running a node/bridge use `rosrun my_qcar_nodes <node_name.py>` inside scripts folder (src/nodes/scripts/)
-- To start running gazebo + rviz simulation use `roslaunch qcar_ngazebo qcar_world.launch` inside qcar_gazebo folder (src/qcar/src/qcar_gazebo/launch/)
+- To start running gazebo + rviz simulation use `roslaunch qcar_gazebo qcar_world.launch` inside qcar_gazebo folder (src/qcar/src/qcar_gazebo/launch/)
