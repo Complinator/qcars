@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-rosdep \
     python3-catkin-tools \
+    ros-noetic-ackermann-msgs \
+    ros-noetic-gazebo-msgs \
+    dos2unix \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,8 +24,16 @@ WORKDIR /root/catkin_ws/src
 # Clone QCar repo (open-source one by bchampp)
 RUN git clone https://github.com/bchampp/autonomous-driving.git qcar
 
+# Copy your nodes package (contains package.xml/CMakeLists.txt)
+COPY nodes /root/catkin_ws/src/nodes
+
 # Build workspace
 WORKDIR /root/catkin_ws
+RUN find src/nodes -name "*.py" -exec dos2unix {} \; || true
+RUN find src/nodes -name "*.sh" -exec dos2unix {} \; || true
+RUN chmod +x src/nodes/scripts/*.py || true
+
+RUN rosdep install --from-paths src --ignore-src -r -y
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
 # Source ROS every time a shell opens
@@ -31,7 +42,7 @@ RUN echo "source /root/catkin_ws/devel/setup.bash" >> /root/.bashrc
 
 # Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
 
 # Default command is handled by entrypoint
 ENTRYPOINT ["/entrypoint.sh"]

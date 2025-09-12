@@ -11,6 +11,8 @@ $env:DISPLAY = "host.docker.internal:0.0"
 docker run -it --rm `
     -e DISPLAY=$env:DISPLAY `
     -v /tmp/.X11-unix:/tmp/.X11-unix `
+    -v /c/Path/to/nodes/scripts:/root/catkin_ws/src/nodes/scripts `
+    --name qcar `
     qcar-sim
 
 # Kill VcXsrv after Docker container exits
