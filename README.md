@@ -4,7 +4,7 @@
 - Note that `example.ps1` requires you to modify the path on the 2nd line to the path to your `config.xlaunch` file
 - The app takes a while to run the gazebo model, so don't worry if it seems frozen
 - The model used cames from an open-source repo called [autonomus-driving](https://github.com/bchampp/autonomous-driving)
-- Remember to create the container using `docker build -t qcar-sim .` (use that code inside this folder)
-- In order to run nodes you would need to run another terminal using `docker exec -it qcar bash`
+- Remember to create the container using `docker build -t qcar-wsl .` (use that code inside this folder)
+- In order to run nodes you would need to run another terminal using `docker exec -it qcar-wsl bash`
 - To start running a node/bridge use `rosrun my_qcar_nodes <node_name.py>` inside scripts folder (src/nodes/scripts/)
 - To start running gazebo + rviz simulation use `roslaunch qcar_gazebo qcar_world.launch` inside qcar_gazebo folder (src/qcar/src/qcar_gazebo/launch/)

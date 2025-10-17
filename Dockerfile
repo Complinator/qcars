@@ -1,7 +1,8 @@
-FROM osrf/ros:noetic-desktop-full
+FROM osrf/ros:noetic-desktop-full-focal
 
 # Install basics
 RUN apt-get update && apt-get install -y \
+    software-properties-common \
     git \
     wget \
     curl \
@@ -10,8 +11,12 @@ RUN apt-get update && apt-get install -y \
     python3-catkin-tools \
     ros-noetic-ackermann-msgs \
     ros-noetic-gazebo-msgs \
+    ros-noetic-velocity-controllers \
     dos2unix \
     build-essential \
+    mesa-utils \
+    mesa-va-drivers \
+    mesa-vulkan-drivers \
     && rm -rf /var/lib/apt/lists/*
 
 # Update rosdep

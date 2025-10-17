@@ -25,9 +25,10 @@ class QCarTargetsBridge:
     def velocity_callback(self, msg):
         # Convert velocity (m/s) to wheel angular velocity (rad/s)
         wheel_speed = msg.data / self.wheel_radius
+        rospy.loginfo(f"Setting wheel speed to {wheel_speed} rad/s")
         
         # Send to rear wheel controllers
-        self.rl_pub.publish(Float64(data=wheel_speed))
+        self.rl_pub.publish(Float64(data=-wheel_speed))
         self.rr_pub.publish(Float64(data=wheel_speed))
     
     def steering_callback(self, msg):

@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Configure GPU acceleration for WSL2
+export LIBGL_ALWAYS_INDIRECT=0
+export MESA_D3D12_DEFAULT_ADAPTER_NAME=AMD
+export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+
 # Source ROS setup
 source /opt/ros/noetic/setup.bash
 source /root/catkin_ws/devel/setup.bash

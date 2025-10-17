@@ -12,8 +12,8 @@ def main():
     rate = rospy.Rate(10)  # 10 Hz
     
     # Movement parameters (adjustable via rosparam)
-    velocity = rospy.get_param('~velocity', 1.0)    # m/s
-    steering = rospy.get_param('~steering', 20.0)    # radians
+    velocity = rospy.get_param('~velocity', 0.2)    # m/s
+    steering = rospy.get_param('~steering', -0.6)    # radians
     
     rospy.loginfo(f"Publishing velocity: {velocity} m/s, steering: {steering} rad")
     
