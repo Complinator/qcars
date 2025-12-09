@@ -1,0 +1,13 @@
+<launch>
+  <!-- 
+    This launch file starts the nodes necessary for keyboard teleoperation.
+    It runs the bridge to communicate with Gazebo and the keyboard_teleop node to read user input.
+  -->
+
+  <!-- QCar Bridge Node -->
+  <node name="qcar_targets_bridge" pkg="nodes" type="qcar_bridge.py" output="screen" />
+
+  <!-- Keyboard Teleop Node -->
+  <node name="keyboard_teleop" pkg="nodes" type="keyboard_teleop.py" output="screen" launch-prefix="xterm -e" />
+  
+</launch>

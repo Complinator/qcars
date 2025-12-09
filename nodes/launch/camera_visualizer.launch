@@ -1,0 +1,18 @@
+<launch>
+  <!-- 
+    This launch file starts the camera visualizer node.
+    It assumes the QCar simulation and Gazebo are already running.
+  -->
+
+  <!-- Camera Visualizer Node -->
+  <node name="camera_visualizer" pkg="my_qcar_nodes" type="camera_visualizer.py" output="screen">
+    <!-- 
+      El tópico de la cámara puede variar según la configuración de tu simulación.
+      Puedes cambiarlo aquí si es necesario. Ejemplos comunes son:
+      /camera/color/image_raw
+      /qcar/camera/image_raw
+      /camera/image_raw
+    -->
+    <param name="image_topic" value="/qcar/camera/image_raw" />
+  </node>
+</launch>

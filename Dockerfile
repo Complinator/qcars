@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-rosdep \
     python3-catkin-tools \
+    python3-matplotlib \
+    python3-opencv \
+    python3-tk \
     ros-noetic-ackermann-msgs \
     ros-noetic-gazebo-msgs \
     ros-noetic-velocity-controllers \
