@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+  
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  
+  <xacro:macro name="gazebo_d435" params="camera_name reference_link topics_ns depth_optical_frame color_optical_frame infrared1_optical_frame infrared2_optical_frame publish_pointcloud:=true" >
+    <xacro:property name="deg_to_rad" value="0.01745329251994329577" />
+    <gazebo reference="${reference_link}">
+      <sensor name="${camera_name}color" type="camera">
+        <camera name="${camera_name}">
+          <horizontal_fov>${85.2*deg_to_rad}</horizontal_fov>
+          <image>
+            <width>1280</width>
+            <height>720</height>
+            <format>RGB_INT8</format>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>100</far>
+          </clip>
+        </camera>
+        <always_on>1</always_on>
+        <update_rate>30</update_rate>
+        <visualize>0</visualize>
+        <!-- Replaced custom RealSense plugin with standard gazebo_ros_camera for simple RGB -->
+        <plugin name="${camera_name}_controller" filename="libgazebo_ros_camera.so">
+             <ros>
+               <namespace>/${topics_ns}</namespace>
+               <remapping>image_raw:=color/image_raw</remapping>
+               <remapping>camera_info:=color/camera_info</remapping>
+             </ros>
+             <frame_name>${color_optical_frame}</frame_name>
+        </plugin>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

@@ -8,3 +8,9 @@
 - In order to run nodes you would need to run another terminal using `docker exec -it qcar-wsl bash`
 - To start running a node/bridge use `rosrun my_qcar_nodes <node_name.py>` inside scripts folder (src/nodes/scripts/)
 - To start running gazebo + rviz simulation use `roslaunch qcar_gazebo qcar_world.launch` inside qcar_gazebo folder (src/qcar/src/qcar_gazebo/launch/)
+
+# Update
+- Start by using `colcon build --symlink-install`
+- Then `source install/setup.bash`
+- Finally, to run the simulation `ros2 launch qcar_gazebo qcar_world.launch.py`
+- To run nodes `ros2 launch my_qcar_nodes basic_movement.launch.py`

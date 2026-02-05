@@ -1,0 +1,13 @@
+data/**
+**/build/**
+**/devel/**
+**/__pycache__/**
+.vscode/
+src/ros-bridge/*
+logs/**
+.catkin_tools/**
+src/vision_opencv
+perception.log
+*.bag
+frame**
+**/.idea/**

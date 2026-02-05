@@ -20,6 +20,10 @@ docker run -it --rm \
     -v /usr/lib/wsl:/usr/lib/wsl:ro \
     -v /dev/dri:/dev/dri \
     --device=/dev/dxg \
-    -v $(pwd)/nodes/scripts:/root/catkin_ws/src/nodes/scripts \
+    -v $(pwd)/nodes:/root/ros2_ws/src/my_qcar_nodes \
+    -v $(pwd)/simulation/qcar/src/qcar_gazebo:/root/ros2_ws/src/qcar_gazebo \
+    -v $(pwd)/simulation/qcar/src/qcar_control:/root/ros2_ws/src/qcar_control \
+    -v $(pwd)/simulation/qcar/src/realsense2_description:/root/ros2_ws/src/realsense2_description \
+    -v $(pwd)/simulation/qcar/src/qcar_interface:/root/ros2_ws/src/qcar_interface \
     --name qcar-wsl \
     qcar-sim-wsl

@@ -1,0 +1,39 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50
+    use_sim_time: true
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    rr_controller:
+       type: velocity_controllers/JointGroupVelocityController
+
+    rl_controller:
+       type: velocity_controllers/JointGroupVelocityController
+
+    base_fr_controller:
+       type: position_controllers/JointGroupPositionController
+
+    base_fl_controller:
+       type: position_controllers/JointGroupPositionController
+
+rr_controller:
+  ros__parameters:
+    joints:
+      - base_wheelrr_joint
+
+rl_controller:
+  ros__parameters:
+    joints:
+      - base_wheelrl_joint
+
+base_fr_controller:
+  ros__parameters:
+    joints:
+      - base_hubfr_joint
+
+base_fl_controller:
+  ros__parameters:
+    joints:
+      - base_hubfl_joint

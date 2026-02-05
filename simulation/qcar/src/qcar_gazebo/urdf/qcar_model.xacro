@@ -1,0 +1,358 @@
+<?xml version='1.0'?>
+<robot name="QCar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find qcar_gazebo)/urdf/materials.xacro" />
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+
+  <link name="base">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarBody.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarBody.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <mass value="2.0"/>
+            <inertia ixx="0.02" ixy="0" ixz="0" iyy="0.02" iyz="0" izz="0.02"/>
+        </inertial>
+    </link>
+
+    <!-- LIDAR -->
+    <joint name="body_lidar_joint" type="fixed">
+        <parent link="base"/>
+        <child link="lidar"/>
+        <origin rpy="0 0 0" xyz="-0.01227 -0.00045 0.16152"/>
+    </joint>
+    <link name="lidar">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarLidar.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="blue"/>
+        </visual>
+        <collision>
+             <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <cylinder length="0.02" radius="0.03"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <!-- Gazebo Lidar Plugin -->
+    <gazebo reference="lidar">
+        <sensor type="ray" name="lidar_sensor">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>40</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>720</samples>
+                        <resolution>1</resolution>
+                        <min_angle>-3.14159</min_angle>
+                        <max_angle>3.14159</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.10</min>
+                    <max>12.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <plugin name="scan" filename="libgazebo_ros_ray_sensor.so">
+                <ros>
+                    <namespace>/qcar</namespace>
+                    <remapping>~/out:=scan</remapping>
+                </ros>
+                <output_type>sensor_msgs/LaserScan</output_type>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+
+    <!-- Wheels and Hubs -->
+    <joint name="base_hubfl_joint" type="revolute">
+        <parent link="base"/>
+        <child link="hubfl"/>
+        <origin rpy="0 0 0" xyz="0.12960 0.05590 0.03338"/>
+        <axis xyz="0 0 1"/>
+        <dynamics damping="0.1" friction="0.0"/>
+        <limit lower="-0.5236" upper="0.5236" effort="10" velocity="10"/>
+    </joint>
+    <link name="hubfl">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarSteeringHubL.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+        <inertial>
+            <mass value="0.05"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+    <joint name="base_hubfr_joint" type="revolute">
+        <parent link="base"/>
+        <child link="hubfr"/>
+        <origin rpy="0 0 0" xyz="0.12960 -0.05590 0.03338"/>
+        <axis xyz="0 0 1"/>
+        <limit lower="-0.5236" upper="0.5236" effort="10" velocity="10"/>
+        <dynamics damping="0.1" friction="0.0"/>
+    </joint>
+    <link name="hubfr">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarSteeringHubR.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="orange"/>
+        </visual>
+        <inertial>
+            <mass value="0.05"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <!-- Rear Wheels (Direct to Base) -->
+    <joint name="base_wheelrl_joint" type="continuous">
+        <parent link="base"/>
+        <child link="wheelrl"/>
+        <origin rpy="0 0 0" xyz="-0.12765 0.05610 0.03338"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0.01" friction="0.01"/>
+    </joint>
+    <link name="wheelrl">
+        <visual>
+             <origin rpy="0 0 3.14" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarWheel.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="1.5707 0 0" xyz="0 0 0"/>
+            <geometry>
+                <cylinder length="0.025" radius="0.032"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <joint name="base_wheelrr_joint" type="continuous">
+        <parent link="base"/>
+        <child link="wheelrr"/>
+        <origin rpy="0 0 0" xyz="-0.12765 -0.05610 0.03338"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0.01" friction="0.01"/>
+    </joint>
+    <link name="wheelrr">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarWheel.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="1.5707 0 0" xyz="0 0 0"/>
+            <geometry>
+                <cylinder length="0.025" radius="0.032"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <!-- Front Wheels (Attached to Hubs) -->
+    <joint name="hubfl_wheelfl_joint" type="continuous">
+        <parent link="hubfl"/>
+        <child link="wheelfl"/>
+        <origin rpy="0 0 0" xyz="0 0.0 0"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0.01" friction="0.01"/>
+    </joint>
+    <link name="wheelfl">
+        <visual>
+            <origin rpy="0 0 3.14" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarWheel.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="1.5707 0 0" xyz="0 0 0"/>
+            <geometry>
+                 <cylinder length="0.025" radius="0.032"/>
+            </geometry>
+        </collision>
+         <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <joint name="hubfr_wheelfr_joint" type="continuous">
+        <parent link="hubfr"/>
+        <child link="wheelfr"/>
+        <origin rpy="0 0 0" xyz="0 0.0 0"/>
+        <axis xyz="0 1 0"/>
+        <dynamics damping="0.01" friction="0.01"/>
+    </joint>
+    <link name="wheelfr">
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <mesh filename="file://$(find qcar_gazebo)/models/qcar/QCarWheel.stl" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <collision>
+            <origin rpy="1.5707 0 0" xyz="0 0 0"/>
+            <geometry>
+                 <cylinder length="0.025" radius="0.032"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+    </link>
+
+    <!-- Cameras -->
+    <link name="camera_rgb"/>
+    <joint name="body_camera_joint" type="fixed">
+        <parent link="base"/>
+        <child link="camera_rgb"/>
+        <origin rpy="0 0 0" xyz="-0.06 -0.001 0.165"/>
+    </joint>
+
+    <link name="camera_csi_front"/>
+    <joint name="body_csi_front_joint" type="fixed">
+        <parent link="base"/>
+        <child link="camera_csi_front"/>
+        <origin rpy="0 0 0" xyz="0.15 0 0.08"/>
+    </joint>
+
+    <link name="camera_csi_right"/>
+    <joint name="body_csi_right_joint" type="fixed">
+        <parent link="base"/>
+        <child link="camera_csi_right"/>
+        <origin rpy="0 0 -1.57" xyz="0.06 -0.05 0.08"/>
+    </joint>
+
+    <link name="camera_csi_back"/>
+    <joint name="body_csi_back_joint" type="fixed">
+        <parent link="base"/>
+        <child link="camera_csi_back"/>
+        <origin rpy="0 0 3.14" xyz="-0.15 0 0.08"/>
+    </joint>
+
+    <link name="camera_csi_left"/>
+    <joint name="body_csi_left_joint" type="fixed">
+        <parent link="base"/>
+        <child link="camera_csi_left"/>
+        <origin rpy="0 0 1.57" xyz="0.06 0.05 0.08"/>
+    </joint>
+
+    <!-- RealSense Macro -->
+    <xacro:sensor_d435 name="camera" topics_ns="camera" parent="camera_rgb">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:sensor_d435>  
+
+    <!-- Standard Gazebo Camera Plugin for CSI Front -->
+    <gazebo reference="camera_csi_front">
+        <sensor type="camera" name="front_camera">
+            <update_rate>30.0</update_rate>
+            <camera name="head">
+                <horizontal_fov>2.0</horizontal_fov>
+                <image>
+                    <width>640</width>
+                    <height>480</height>
+                    <format>R8G8B8</format>
+                </image>
+            </camera>
+            <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                <ros>
+                    <namespace>/qcar</namespace>
+                    <remapping>image_raw:=camera/image_raw</remapping>
+                </ros>
+                <camera_name>csi_front</camera_name>
+                <frame_name>camera_csi_front</frame_name>
+            </plugin>
+        </sensor>
+    </gazebo>
+
+    <!-- ROS 2 Control -->
+    <ros2_control name="GazeboSystem" type="system">
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+
+        <joint name="base_wheelrl_joint">
+            <command_interface name="velocity">
+                 <param name="min">-100</param>
+                 <param name="max">100</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="base_wheelrr_joint">
+            <command_interface name="velocity">
+                 <param name="min">-100</param>
+                 <param name="max">100</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="base_hubfl_joint">
+            <command_interface name="position">
+                 <param name="min">-0.6</param>
+                 <param name="max">0.6</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="base_hubfr_joint">
+            <command_interface name="position">
+                 <param name="min">-0.6</param>
+                 <param name="max">0.6</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+
+    <gazebo>
+        <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+            <parameters>$(find qcar_control)/config/qcar_control.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+</robot>
