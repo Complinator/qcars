@@ -75,3 +75,42 @@ ros2 topic list | grep perception
 ros2 topic echo /planning/center_offset
 ros2 topic echo /perception/object/detections
 ```
+
+## ROS2 line following with live perception
+
+You can now run automatic lane following and see live overlays for both lane and object detection.
+
+### Launch everything (bridge + lane + object + line follower + viewer)
+
+```bash
+source /opt/ros/humble/setup.bash
+source /root/ros2_ws/install/setup.bash
+ros2 launch my_qcar_nodes lane_following_perception.launch.py image_topic:=/qcar/csi_front/image_raw
+```
+
+The launch starts these nodes:
+
+- `qcar_bridge` (sends velocity/steering targets to Gazebo controllers)
+- `lane_detection_node`
+- `object_detection_node`
+- `lane_follower`
+- `perception_viewer` (shows two OpenCV windows: lane overlay + object overlay)
+
+Press `q` in an overlay window to close the viewer.
+
+### Useful tuning args
+
+```bash
+ros2 launch my_qcar_nodes lane_following_perception.launch.py \
+	image_topic:=/qcar/csi_front/image_raw \
+	base_velocity:=0.45 \
+	confidence_threshold:=0.50
+```
+
+### Controller behavior
+
+- `lane_follower` subscribes to `/planning/center_offset` and `/planning/lane_detected`.
+- It publishes:
+	- `/qcar/velocity_target`
+	- `/qcar/steering_target`
+- If lane is not detected recently, it sends zero velocity and zero steering (fail-safe stop).

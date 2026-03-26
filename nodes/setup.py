@@ -32,6 +32,8 @@ setup(
             'keyboard_teleop = my_qcar_nodes.keyboard_teleop:main',
             'lane_detection_node = my_qcar_nodes.lane_detection_node:main',
             'object_detection_node = my_qcar_nodes.object_detection_node:main',
+            'lane_follower = my_qcar_nodes.lane_follower:main',
+            'perception_viewer = my_qcar_nodes.perception_viewer:main',
         ],
     },
 )

@@ -8,7 +8,7 @@ from rclpy.qos import qos_profile_sensor_data
 
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
-from std_msgs.msg import Float64, Float64MultiArray
+from std_msgs.msg import Bool, Float64, Float64MultiArray
 
 
 class LaneDetectionNode(Node):
@@ -19,11 +19,13 @@ class LaneDetectionNode(Node):
         self.declare_parameter('overlay_topic', '/perception/lane/overlay')
         self.declare_parameter('center_offset_topic', '/planning/center_offset')
         self.declare_parameter('waypoints_topic', '/planning/waypoints')
+        self.declare_parameter('lane_detected_topic', '/planning/lane_detected')
 
         image_topic = self.get_parameter('image_topic').value
         overlay_topic = self.get_parameter('overlay_topic').value
         center_offset_topic = self.get_parameter('center_offset_topic').value
         waypoints_topic = self.get_parameter('waypoints_topic').value
+        lane_detected_topic = self.get_parameter('lane_detected_topic').value
 
         self.bridge = CvBridge()
 
@@ -37,12 +39,13 @@ class LaneDetectionNode(Node):
         self.overlay_pub = self.create_publisher(Image, overlay_topic, 10)
         self.center_offset_pub = self.create_publisher(Float64, center_offset_topic, 10)
         self.waypoints_pub = self.create_publisher(Float64MultiArray, waypoints_topic, 10)
+        self.lane_detected_pub = self.create_publisher(Bool, lane_detected_topic, 10)
 
         self.get_logger().info(f'Lane detection subscribed to: {image_topic}')
 
     def image_callback(self, msg: Image) -> None:
         frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        overlay, center_offset_px, waypoints = self.detect_lanes(frame)
+        overlay, center_offset_px, waypoints, lane_detected = self.detect_lanes(frame)
 
         overlay_msg = self.bridge.cv2_to_imgmsg(overlay, encoding='bgr8')
         overlay_msg.header = msg.header
@@ -53,6 +56,8 @@ class LaneDetectionNode(Node):
         waypoints_msg = Float64MultiArray()
         waypoints_msg.data = [float(v) for xy in waypoints for v in xy]
         self.waypoints_pub.publish(waypoints_msg)
+
+        self.lane_detected_pub.publish(Bool(data=lane_detected))
 
     def detect_lanes(self, frame: np.ndarray):
         h, w = frame.shape[:2]
@@ -126,7 +131,9 @@ class LaneDetectionNode(Node):
         waypoints = []
         center_offset_px = 0.0
 
-        if left_x_bottom is not None and right_x_bottom is not None:
+        lane_detected = left_x_bottom is not None and right_x_bottom is not None
+
+        if lane_detected:
             lane_center_bottom = 0.5 * (left_x_bottom + right_x_bottom)
             lane_center_top = 0.5 * (left_x_top + right_x_top)
 
@@ -169,7 +176,7 @@ class LaneDetectionNode(Node):
                 cv2.LINE_AA,
             )
 
-        return overlay, center_offset_px, waypoints
+        return overlay, center_offset_px, waypoints, lane_detected
 
 
 def main(args=None):
