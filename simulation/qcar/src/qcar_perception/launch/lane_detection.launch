@@ -1,3 +1,11 @@
 <launch>
-  <node name="lane_detector" pkg="qcar_perception" type="lane_detection.py" output="screen" />
+  <arg name="front_camera_topic" default="/qcar/csi_front/image_raw"/>
+  <arg name="lane_detection_realsense" default="false"/>
+  <arg name="is_simulation" default="true"/>
+
+  <node name="lane_detector" pkg="qcar_perception" type="lane_detection.py" output="screen" respawn="true">
+    <param name="front_camera_topic" value="$(arg front_camera_topic)"/>
+    <param name="lane_detection_realsense" value="$(arg lane_detection_realsense)"/>
+    <param name="is_simulation" value="$(arg is_simulation)"/>
+  </node>
 </launch>

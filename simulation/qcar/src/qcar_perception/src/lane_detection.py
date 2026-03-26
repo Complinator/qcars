@@ -35,12 +35,16 @@ class LaneDetectionNode(object):
         super().__init__()
         rospy.loginfo("Starting Lane Detector")
         self.detector = LaneDetector()
-        if (rospy.get_param('lane_detection_realsense')):
+        self.use_realsense = rospy.get_param('~lane_detection_realsense', False)
+        self.is_simulation = rospy.get_param('~is_simulation', True)
+        self.front_camera_topic = rospy.get_param('~front_camera_topic', '/qcar/csi_front/image_raw')
+
+        if self.use_realsense:
             self.detector.set_constants(1280, 720)
             self.detector.set_roi(realsense_roi)
         else:
             self.detector.set_constants(640, 480)
-            if (rospy.get_param('is_simulation')):
+            if self.is_simulation:
                 self.detector.set_roi(front_roi_simulation)
             else:
                 self.detector.set_roi(front_roi_real)
@@ -52,10 +56,8 @@ class LaneDetectionNode(object):
         self.now = rospy.Time.now()
 
     def subscribers(self):
-        try:
-            topic = rospy.get_param('/front_camera_topic')
-        except KeyError as e:
-            topic = "/qcar/csi_front"
+        topic = self.front_camera_topic
+        rospy.loginfo("Subscribing lane detector to image topic: %s", topic)
         self._sub = rospy.Subscriber(topic, Image, self.img_callback, queue_size=1, buff_size=2**24)
 
     def publishers(self):

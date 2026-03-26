@@ -1,4 +1,10 @@
 <launch>
+  <arg name="use_rgbd_node" default="false"/>
+  <arg name="object_image_topic" default="/qcar/csi_front/image_raw"/>
+  <arg name="lane_front_camera_topic" default="/qcar/csi_front/image_raw"/>
+  <arg name="lane_detection_realsense" default="false"/>
+  <arg name="lane_is_simulation" default="true"/>
+
   <param name="robot_description" command="$(find xacro)/xacro.py '$(find qcar_gazebo)/urdf/qcar_model.xacro'"/>
 
   <!-- Joint State Publisher-->
@@ -7,11 +13,18 @@
   <!-- Combine joint values -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
-    <!-- Intel RealSense -->
-  <node name="rgbd_node" pkg="qcar" type="rgbdnode.py" output="screen" />
+    <!-- Optional Intel RealSense node (disabled for Gazebo by default) -->
+  <node if="$(arg use_rgbd_node)" name="rgbd_node" pkg="qcar" type="rgbdnode.py" output="screen" />
 
-  <include file="$(find qcar_perception)/launch/object_detection.launch" />
-  <include file="$(find qcar_perception)/launch/lane_detection.launch" />
+  <include file="$(find qcar_perception)/launch/object_detection.launch">
+    <arg name="image_topic" value="$(arg object_image_topic)"/>
+  </include>
+
+  <include file="$(find qcar_perception)/launch/lane_detection.launch">
+    <arg name="front_camera_topic" value="$(arg lane_front_camera_topic)"/>
+    <arg name="lane_detection_realsense" value="$(arg lane_detection_realsense)"/>
+    <arg name="is_simulation" value="$(arg lane_is_simulation)"/>
+  </include>
 
   <!-- Show in Rviz   -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find qcar_perception)/rviz/perception.rviz"/>

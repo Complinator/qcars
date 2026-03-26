@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
     <!-- Camera topic and weights, config and classes files -->
-    <arg name="image_topic"	                default="/camera/color/image_raw"/>
+    <arg name="image_topic"	                default="/qcar/csi_front/image_raw"/>
     <arg name="weights_path"	            default="$(find qcar_perception)/weights/best.pt"/>
 
     <!-- Published topics -->
