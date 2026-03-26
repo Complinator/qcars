@@ -30,6 +30,8 @@ setup(
             'camera_visualizer = my_qcar_nodes.camera_visualizer:main',
             'lidar_visualizer = my_qcar_nodes.lidar_visualizer:main',
             'keyboard_teleop = my_qcar_nodes.keyboard_teleop:main',
+            'lane_detection_node = my_qcar_nodes.lane_detection_node:main',
+            'object_detection_node = my_qcar_nodes.object_detection_node:main',
         ],
     },
 )

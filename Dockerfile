@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-cv-bridge \
     python3-matplotlib \
     python3-opencv \
+    python3-numpy \
     python3-tk \
     dos2unix \
     build-essential \
